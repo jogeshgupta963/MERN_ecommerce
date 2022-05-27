@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
         type:String,
         // required:[true,"name is required"]
     },
-    Image:{
+    image:{
         type:String,
         // required:[true,"email is required"],
         

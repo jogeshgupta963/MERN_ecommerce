@@ -21,14 +21,9 @@ export const productListSlice = createSlice({
     name:'products',
     initialState:{
         products:[],
-        status:null
+        status:null,
+        error:""
     },
-    // reducers:{
-    //     product_list: async (state)=>{
-    //         let {data} = await axios.get('/products');
-    //         state.products.push(data);
-    //     }
-    // },
     extraReducers:{
 
         [fetchProducts.pending]:state=>{
@@ -40,7 +35,7 @@ export const productListSlice = createSlice({
         },
         [fetchProducts.rejected]:(state,{payload})=>{
             state.error = payload
-            state.status = payload
+            state.status = 'error'
         }
     }
 })

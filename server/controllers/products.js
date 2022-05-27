@@ -19,6 +19,7 @@ async function getAllProducts(req,res){
 async function getSingleProduct(req,res){
     try {
             const product = await Product.findById(req.params.id);
+            // throw new Error("Item doesnt Exist")
             if(!product) return res.status(400).json("Product not found")
             res.status(200).json(product);
         

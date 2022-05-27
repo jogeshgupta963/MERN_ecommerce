@@ -50,7 +50,7 @@ const products = [
         description:'Protect your private files with included SanDisk SecureAccess software.',
         brand:"Sandisk",
         category:'Electronics',
-        price:329,
+        price:329,  
         countInStock:5,
         rating:5,
         numReviews:10
