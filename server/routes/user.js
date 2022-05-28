@@ -1,7 +1,7 @@
 
 import express from'express'
 
-import {loginUser,registerUser,getUserProfile,logoutUser,getAllUsers } from '../controllers/user.js'
+import {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers } from '../controllers/user.js'
 
 import {isLoggedIn} from '../middlewares/auth.js'
 
@@ -22,6 +22,7 @@ router
 router
 .route('/profile')
 .get(isLoggedIn, getUserProfile)
+.put(isLoggedIn, updateUserProfile)
 
 router
 .route('/allProfiles')

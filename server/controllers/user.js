@@ -23,7 +23,6 @@ async function loginUser(req,res){
         res.cookie('JWT', token, 
         {
             expiresIn:process.env.JWT_COOKIE_EXPIRES_IN,
-            httpOnly:true
         });
 
         return res.status(200).json(user);
@@ -50,12 +49,11 @@ async function registerUser(req,res){
         res.cookie('JWT', token, 
         {
             expiresIn:process.env.JWT_COOKIE_EXPIRES_IN,
-            httpOnly:true
         });
         return res.status(200).json(newUser);
     }
     catch(err){
-        return res.status(500).json(err.message);
+         res.status(404).json(err.message);
     }
 }
 //@route /user/profile
@@ -82,6 +80,10 @@ async function logoutUser(req,res){
         return res.status(500).json(err.message);
     }
 }
+//@route /user/allProfiles
+//@desc GET all users
+//@access Private/Admin
+
 async function getAllUsers(req,res){
     try{
         const users = await User.find({});
@@ -92,4 +94,27 @@ async function getAllUsers(req,res){
     }
 }
 
-export {loginUser,registerUser,getUserProfile,logoutUser,getAllUsers};
+//@route /user/profile
+//@desc PUT update user profile
+//@access Private
+async function updateUserProfile(req,res){
+    try {
+        const user = await User.findById(req.user._id);
+        if(!user){
+            throw new Error('User not found');
+        }
+        let reqKeys = Object.keys(req.body);
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        if(req.body.password){
+            user.password = await bcrypt.hash(req.body.password, 10);
+        }
+        await user.save();
+        res.status(200).json(user);
+    } catch (err) {
+        res.json(err.message);
+    }
+}
+
+
+export {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers};
