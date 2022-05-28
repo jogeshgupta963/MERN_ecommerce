@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useRef } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "../redux/cart";
-import { Link, useParams } from "react-router-dom";
+import { removeFromCart, updateCart, clearCart } from "../redux/cart";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Row,
   Col,
@@ -16,11 +16,16 @@ import Message from "../components/Message";
 
 function CartScreen() {
   const { cart } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const checkOutHandler = () => {
+    navigate("/login?redirect=shipping");
+  };
 
   return (
     <Row>
-      <Col md={12}>
-        <h1>Shopping Cart</h1>
+      <Col md={8}>
+        <h1 className="text-center my-4">Shopping Cart</h1>
         {cart.length === 0 ? (
           <Message variant="danger" msg="Your cart is Empty">
             <Link to="/">Go Back</Link>
@@ -31,19 +36,24 @@ function CartScreen() {
               <ListGroup.Item key={item._id}>
                 <Row>
                   <Col md={3}>
-                    <Image src={item.image} alt={item.name} fluid />
+                    <Image
+                      src={item.image}
+                      style={{ width: "150px" }}
+                      alt={item.name}
+                      fluid
+                    />
                   </Col>
-                  <Col md={2}>
+                  <Col md={3}>
                     <Link to={`/product/${item._id}`}>{item.name}</Link>
                   </Col>
                   <Col md={2}>₹ {item.price}</Col>
                   <Col md={2}>
                     <Form.Control
                       as="select"
-                      // value={}
-                      // onChange={(e) =>
-                      // dispatch(addToCart(item._id, Number(e.target.value)))
-                      // }
+                      value={item.qty}
+                      onChange={(e) => {
+                        dispatch(updateCart({ ...item, qty: e.target.value }));
+                      }}
                     >
                       {[...Array(item.countInStock).keys()].map((x) => (
                         <option key={x + 1} value={x + 1}>
@@ -56,9 +66,9 @@ function CartScreen() {
                     <Button
                       type="button"
                       variant="white"
-                      // onClick={() => removeFromCart(item._id)}
+                      onClick={(e) => dispatch(removeFromCart(item))}
                     >
-                      <i className="fas fa-trash"></i>{" "}
+                      <i className="fas fa-trash"></i>
                     </Button>
                   </Col>
                 </Row>
@@ -67,8 +77,39 @@ function CartScreen() {
           </ListGroup>
         )}
       </Col>
-      {/* <Col md={2}></Col>
-      <Col md={2}></Col> */}
+      <Col md={4} className="my-5">
+        <ListGroup variant="success">
+          <ListGroup.Item>
+            <h3>
+              Subtotal ({cart.reduce((a, c) => Number(a) + Number(c.qty), 0)})
+              items
+            </h3>
+            ₹{" "}
+            {cart.reduce(
+              (a, c) => Number(a) + Number(c.price) * Number(c.qty),
+              0
+            )}
+            <ListGroup.Item className="mx-auto" style={{ border: "none" }}>
+              <Button
+                type="button"
+                // className="btn-block"
+                disable={cart.length === 0}
+                onClick={checkOutHandler}
+              >
+                Proceed{" "}
+              </Button>
+              <Button
+                type="button"
+                className="mx-1"
+                disable={cart.length === 0}
+                onClick={() => dispatch(clearCart())}
+              >
+                Clear Cart
+              </Button>
+            </ListGroup.Item>
+          </ListGroup.Item>
+        </ListGroup>
+      </Col>
     </Row>
   );
 }

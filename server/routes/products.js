@@ -12,4 +12,6 @@ router
 router
 .route('/:id')
 .get(getSingleProduct)
+
+
 export {router}

@@ -36,7 +36,7 @@ function ProductScreen()
         qty
       }
         dispatch(addToCart(payload))
-      // navigate(`/cart/${id}?qty=${qty}`);
+      
       navigate(`/cart`);
     }
   
@@ -109,7 +109,7 @@ function ProductScreen()
                 </Row>
               </ListGroup.Item>}
 
-              <ListGroup.Item>
+              <ListGroup.Item className="mx-auto">
                 <Button
                 onClick = {handleClick }
                   className="btn-block"
