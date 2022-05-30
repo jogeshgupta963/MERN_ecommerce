@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/jogeshgupta963/MERN_ecommerce#readme",
   "dependencies": {
-    "js-cookie": "^3.0.1"
+    "concurrently": "^7.2.1"
   }
 }
