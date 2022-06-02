@@ -35,7 +35,6 @@ function ShippingScreen() {
             ref={address}
           ></Form.Control>
         </Form.Group>
-
         <Form.Group controlId="city">
           <Form.Label className="p-2">City:</Form.Label>
           <Form.Control
