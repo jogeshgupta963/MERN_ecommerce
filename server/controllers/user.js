@@ -1,7 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-
+import nodemailer from 'nodemailer'
+import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config'
 
 
@@ -50,6 +51,24 @@ async function registerUser(req,res){
         {
             expiresIn:process.env.JWT_COOKIE_EXPIRES_IN,
         });
+
+        //nodemailer    
+        // let gmailPass = process.env.gmailPass
+
+        // let transporter = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     auth: {
+        //         user: 'jogeshgupta963@gmail.com',
+        //         pass: gmailPass
+        //     }
+        // });
+        // let info = transporter.sendMail({
+        //     from: '"Welcome👻" <jogeshgupta963@gmail.com>',
+        //     to: newUser.email,
+        //     subject: `Welcome ${newUser.name} .`,
+        //     html: `<b>Welcome to ${jaduu} </b>`,
+        // });
+
         return res.status(200).json(newUser);
     }
     catch(err){
@@ -100,21 +119,78 @@ async function getAllUsers(req,res){
 async function updateUserProfile(req,res){
     try {
         const user = await User.findById(req.user._id);
+        console.log(req.body);
         if(!user){
             throw new Error('User not found');
         }
-        let reqKeys = Object.keys(req.body);
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
         if(req.body.password){
+            const match = await bcrypt.compare(req.body.oldPassword, user.password);
+            if(!match){
+                throw new Error('Invalid password');
+            }
+            
             user.password = await bcrypt.hash(req.body.password, 10);
         }
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
         await user.save();
+
         res.status(200).json(user);
     } catch (err) {
         res.json(err.message);
     }
 }
 
+//@route /user/forgot-password
+//@desc POST mail reset password link
+//@access Public
+async function forgotPassword(req,res){
+    try {
+        const {email} = req.body
+        let gmailPass = process.env.gmailPass
+        
+        const user = await User.findOne({email});
 
-export {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers};
+        if(!user) throw new Error('email does not exist')
+
+        let resetPasswordLink = `${req.protocol}://localhost:3000/user/resetPassword/${user._id}-${uuidv4()}` 
+        // let resetPasswordLink = `${req.protocol}://${req.get('host')}/user/resetPassword/${user._id}-${uuidv4()}` 
+
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'jogeshgupta963@gmail.com',
+                pass: gmailPass
+            }
+        });
+        let info = transporter.sendMail({
+            from: '"Reset Paswword👻" <jogeshgupta963@gmail.com>',
+            to: email,
+            subject: `Password reset for.`,
+            html: `<b>Click here to reset ur password ${resetPasswordLink} </b>`,
+        });
+        res.json("reset link sent")
+    } catch (err) {
+        res.json(err.message);
+    }
+}
+
+//@route /user/resetPassword/:id
+//@desc POST reset password
+//@access Public
+
+async function resetPasswordLink(req,res){
+    try {
+        const id = req.params.id.split('-')[0];
+        const {password }= req.body
+        const user = await User.findById(id);
+
+        user.password = await bcrypt.hash(password, 10);
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        res.json(err.message)
+    }
+}
+
+export {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers,forgotPassword,resetPasswordLink};

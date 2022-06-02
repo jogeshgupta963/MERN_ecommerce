@@ -13,7 +13,7 @@ function ProfileScreen() {
 
   const email = useRef("");
   const pass = useRef("");
-  const conPass = useRef("");
+  const oldPass = useRef("");
   const name = useRef("");
 
   const [msg, setMsg] = React.useState(-1);
@@ -23,34 +23,27 @@ function ProfileScreen() {
 
   const submitHandle = async (e) => {
     e.preventDefault();
-    if (
-      pass.current.value === "" ||
-      conPass.current.value === "" ||
-      name.current.value === "" ||
-      email.current.value === ""
-    ) {
-      throw new Error("Please fill all the fields");
-    }
+    console.log(user);
     try {
-      if (pass.current.value !== conPass.current.value) {
-        throw new Error("Passwords do not match");
+      if (
+        (!pass.current.value && oldPass.current.value) ||
+        (pass.current.value && !oldPass.current.value)
+      ) {
+        throw new Error("enter old and new passwords");
       }
       axios.defaults.withCredentials = true;
-      const { data } = await axios.post("/user/register", {
-        name: name.current.value,
-        email: email.current.value,
-        password: pass.current.value,
+      const { data } = await axios.put("/user/profile", {
+        name: name.current.value ? name.current.value : undefined,
+        email: email.current.value ? email.current.value : undefined,
+        oldPassword: oldPass.current.value ? oldPass.current.value : undefined,
+        password: pass.current.value ? pass.current.value : undefined,
       });
+      console.log(data);
       dispatch(getUser({ ...data }));
       setMsg(1);
     } catch (error) {
-      if (error.message === "Request failed with status code 404") {
-        setError("Email already exists");
-        setMsg(0);
-      } else {
-        setError(error.message);
-        setMsg(0);
-      }
+      setError(error.message);
+      setMsg(0);
     }
   };
   return (
@@ -88,7 +81,7 @@ function ProfileScreen() {
                 <Form.Control
                   type="password"
                   placeholder="old password"
-                  ref={pass}
+                  ref={oldPass}
                 ></Form.Control>
               </Form.Group>
 
@@ -97,7 +90,7 @@ function ProfileScreen() {
                 <Form.Control
                   type="password"
                   placeholder="new password"
-                  ref={conPass}
+                  ref={pass}
                 ></Form.Control>
               </Form.Group>
               <Button className="mt-3" type="submit" variant="primary">

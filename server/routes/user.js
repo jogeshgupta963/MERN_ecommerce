@@ -1,7 +1,7 @@
 
 import express from'express'
 
-import {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers } from '../controllers/user.js'
+import {loginUser,updateUserProfile,registerUser,getUserProfile,logoutUser,getAllUsers,forgotPassword,resetPasswordLink } from '../controllers/user.js'
 
 import {isLoggedIn} from '../middlewares/auth.js'
 
@@ -28,7 +28,13 @@ router
 .route('/allProfiles')
 .get(isLoggedIn, getAllUsers)
 
+router
+.route('/forgot-password')
+.post(forgotPassword)
 
+router
+.route("/resetPassword/:id")
+.post(resetPasswordLink)
 
 
 export {router}

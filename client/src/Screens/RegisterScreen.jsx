@@ -39,6 +39,8 @@ function RegisterScreen() {
         email: email.current.value,
         password: pass.current.value,
       });
+      if (!data) throw new Error("Something went wrong");
+
       dispatch(getUser({ ...data }));
       setMsg(1);
     } catch (error) {
