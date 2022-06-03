@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { saveShippingAddress } from "../redux/cart";
+import Cookies from "js-cookie";
+import { Link, Navigate } from "react-router-dom";
 
 function ShippingScreen() {
   const address = useRef("");
@@ -13,7 +15,6 @@ function ShippingScreen() {
   const submitHandle = (e) => {
     e.preventDefault();
 
-    console.log("saved");
     const shippingDetails = {
       address: address.current.value,
       city: city.current.value,
@@ -25,6 +26,7 @@ function ShippingScreen() {
 
   return (
     <Container as="div" style={{ maxWidth: "50%" }} className="mx-auto">
+       {!Cookies.get("JWT") && <Navigate to="/login?redirect=shipping " />}
       <h1 className="text-center pt-2">Shipping Address</h1>
       <Form>
         <Form.Group controlId="address">

@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate,useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Message from "../components/Message";
 import Cookies from "js-cookie";
@@ -11,6 +11,9 @@ import { getUser } from "../redux/user.js";
 function LoginScreen() {
   const email = useRef("");
   const pass = useRef("");
+
+  const [searchParams] = useSearchParams();
+  console.log(searchParams.get('redirect'))
 
   const [msg, setMsg] = React.useState(-1);
   const dispatch = useDispatch();
@@ -32,7 +35,7 @@ function LoginScreen() {
 
   return (
     <div>
-      {Cookies.get("JWT") && <Navigate to="/" />}
+      {Cookies.get("JWT") && <Navigate to={searchParams.get('redirect') ?`/${searchParams.get('redirect')}` : '/'  } />}
       <Container>
         <Row className="justify-content-md-center">
           <Col xs={12} md={6}>

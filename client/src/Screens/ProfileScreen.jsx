@@ -93,6 +93,9 @@ function ProfileScreen() {
                   ref={pass}
                 ></Form.Control>
               </Form.Group>
+              <Row as="div"  >
+                <Link className="pt-2 pb-0" style={{textAlign:"right"}} to="/forgot-password"> Forgot Password</Link>
+            </Row>
               <Button className="mt-3" type="submit" variant="primary">
                 Update
               </Button>
