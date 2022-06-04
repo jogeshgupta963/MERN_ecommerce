@@ -13,7 +13,7 @@ function PaymentScreen() {
   if (!shipping) {
     navigate('/shipping')
   }
-  const [paymentMethod, setPaymentMethod] = useState()
+  const [paymentMethod, setPaymentMethod] = useState(payment)
   const [err, setErr] = useState(-1)
   const dispatch = useDispatch()
 

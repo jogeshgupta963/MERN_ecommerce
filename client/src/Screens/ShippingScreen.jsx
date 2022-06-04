@@ -8,10 +8,15 @@ import CheckoutSteps from '../components/CheckoutSteps'
 import Message from '../components/Message'
 
 function ShippingScreen() {
-  const address = useRef('')
-  const city = useRef('')
-  const country = useRef('')
-  const postalCode = useRef(0)
+  // const address = useRef('')
+  // const city = useRef('')
+  // const country = useRef('')
+  // const postalCode = useRef(0)
+  const { shipping } = useSelector((state) => state.cart)
+  const address = useRef(shipping.address)
+  const city = useRef(shipping.city)
+  const country = useRef(shipping.country)
+  const postalCode = useRef(shipping.postalCode)
   const [error, setError] = useState(-1)
 
   const navigate = useNavigate()

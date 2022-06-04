@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   Row,
@@ -11,13 +11,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { createOrder } from '../redux/order.js'
 
 function PlaceOrderScreen() {
+  //global states
   const { cart, shipping, payment } = useSelector((state) => state.cart)
+  const { order, status, error } = useSelector((state) => state.order)
 
   //   calculate the total price of the cart
-
   const itemPrice = cart.reduce((total, product) => {
     return total + product.price * product.qty
   }, 0)
@@ -28,10 +30,43 @@ function PlaceOrderScreen() {
 
   const totalPrice = itemPrice + taxPrice + shippingPrice
 
+  //   hooks
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  //handlers
   const placeOrderHandle = (e) => {
     e.preventDefault()
-    console.log('hello')
+
+    const orderItems = cart.map((item) => {
+      return {
+        name: item.name,
+        qty: item.qty,
+        image: item.image,
+        price: item.price,
+        product: item._id,
+      }
+    })
+    console.log(orderItems)
+    dispatch(
+      createOrder({
+        orderItems,
+        shippingAddress: shipping,
+        paymentMethod: payment,
+        itemPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+      }),
+    )
   }
+
+  useEffect(() => {
+    if (status === 'success') {
+      navigate(`/order/${order._id}`)
+    }
+    //eslint-disable-next-line
+  }, [dispatch, navigate, status])
 
   return (
     <>
@@ -68,7 +103,7 @@ function PlaceOrderScreen() {
                   {cart.map((item) => (
                     <ListGroup.Item key={item.id}>
                       <Row>
-                        <Col md={3}>
+                        <Col md={1}>
                           <Image
                             src={item.image}
                             style={{ maxHeight: '15vh' }}
@@ -77,25 +112,28 @@ function PlaceOrderScreen() {
                             rounded
                           />
                         </Col>
-                        <Col md={9}>
+                        <Col md={3}>
                           <h5>
                             <Link
                               style={{
                                 textDecoration: 'none',
-                                fontStyle: 'italic',
                               }}
-                              to={`product/${item._id}`}
+                              to={`/product/${item._id}`}
                             >
                               {item.name}
                             </Link>
                           </h5>
+                        </Col>
+                        <Col>
                           <strong
                             style={{ fontSize: '15px', fontWeight: 'bold' }}
                           >
                             Quantity:{' '}
                           </strong>
                           {item.qty}
-                          <br />
+                        </Col>
+
+                        <Col>
                           <strong
                             style={{ fontSize: '15px', fontWeight: 'bold' }}
                           >
@@ -103,6 +141,7 @@ function PlaceOrderScreen() {
                           </strong>
                           {item.price} x {item.qty} = ₹{item.price * item.qty}
                         </Col>
+                        {/* </Col> */}
                       </Row>
                     </ListGroup.Item>
                   ))}
@@ -144,6 +183,10 @@ function PlaceOrderScreen() {
                     <Col>{totalPrice}</Col>
                   </Row>
                 </ListGroup.Item>
+              </ListGroup.Item>
+
+              <ListGroup.Item>
+                {status === 'error' && <Message variant="danger" msg={error} />}
               </ListGroup.Item>
 
               <ListGroup.Item>
