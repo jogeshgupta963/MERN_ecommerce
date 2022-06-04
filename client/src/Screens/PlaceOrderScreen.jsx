@@ -24,7 +24,7 @@ function PlaceOrderScreen() {
     return total + product.price * product.qty
   }, 0)
 
-  const taxPrice = Number(itemPrice * (0.18).toFixed(2))
+  const taxPrice = Number(itemPrice * 0.18).toFixed(2)
 
   const shippingPrice = itemPrice * 0.01
 
@@ -58,15 +58,15 @@ function PlaceOrderScreen() {
         shippingPrice,
         totalPrice,
       }),
+      navigate(`/order/${order._id}`),
     )
   }
 
-  useEffect(() => {
-    if (status === 'success') {
-      navigate(`/order/${order._id}`)
-    }
-    //eslint-disable-next-line
-  }, [dispatch, navigate, status])
+  // useEffect(() => {
+  //   if (status === 'success') {
+  //     navigate(`/order/${order._id}`)
+  //   }
+  // }, [dispatch, navigate, status, order._id])
 
   return (
     <>
