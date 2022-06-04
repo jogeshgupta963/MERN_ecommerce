@@ -1,20 +1,34 @@
 import React, { useState, useRef } from 'react'
 import { Container, Row, Col, Button, Form } from 'react-bootstrap'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { saveShippingAddress } from '../redux/cart'
 import Cookies from 'js-cookie'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import CheckoutSteps from '../components/CheckoutSteps'
+import Message from '../components/Message'
 
 function ShippingScreen() {
   const address = useRef('')
   const city = useRef('')
   const country = useRef('')
   const postalCode = useRef(0)
+  const [error, setError] = useState(-1)
 
+  const navigate = useNavigate()
   const dispatch = useDispatch()
+
   const submitHandle = (e) => {
     e.preventDefault()
+
+    if (
+      address.current.value === '' ||
+      city.current.value === '' ||
+      country.current.value === '' ||
+      postalCode.current.value === ''
+    ) {
+      setError(0)
+      return
+    }
 
     const shippingDetails = {
       address: address.current.value,
@@ -23,6 +37,7 @@ function ShippingScreen() {
       postalCode: postalCode.current.value,
     }
     dispatch(saveShippingAddress(shippingDetails))
+    navigate('/payment')
   }
 
   return (
@@ -31,6 +46,9 @@ function ShippingScreen() {
       <CheckoutSteps step1 step2 />
       <Container as="div" style={{ maxWidth: '50%' }} className="mx-auto">
         <h1 className="text-center pt-2">Shipping Address</h1>
+        {error === 0 && (
+          <Message variant="danger" msg="Please fill all fields" />
+        )}
         <Form>
           <Form.Group controlId="address">
             <Form.Label className="p-2">Address:</Form.Label>
