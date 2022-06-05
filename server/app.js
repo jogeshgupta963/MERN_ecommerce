@@ -17,7 +17,7 @@ app.use(cookieParser())
 //routes
 app.use('/products', products)
 app.use('/user', user)
-app.use('/order', order)
+app.use('/orders', order)
 
 app.use(notFound)
 app.use(errorHandle)
@@ -25,7 +25,8 @@ app.use(errorHandle)
   try {
     await connect(process.env.MONGO_URI)
     console.log('DB connected')
-    app.listen(process.env.PORT || 3001, () => console.log('Server started'))
+    var port = process.env.PORT || 3001
+    app.listen(port, () => console.log(`Server started on port ${port}`))
   } catch (err) {
     console.log(err.message)
   }

@@ -47,7 +47,7 @@ function PlaceOrderScreen() {
         product: item._id,
       }
     })
-    console.log(orderItems)
+
     dispatch(
       createOrder({
         orderItems,
@@ -58,8 +58,8 @@ function PlaceOrderScreen() {
         shippingPrice,
         totalPrice,
       }),
-      navigate(`/order/${order._id}`),
     )
+    navigate(`/order/${order._id}`)
   }
 
   // useEffect(() => {
