@@ -1,5 +1,7 @@
 import Order from '../models/Order.js'
-
+import Stripe from 'stripe'
+import 'dotenv/config'
+const stripe = new Stripe(process.env.secretKey)
 //@desc   Create new order
 //@route  POST /order
 //@access Private
@@ -77,4 +79,27 @@ async function updateOrderToPaid(req, res) {
   }
 }
 
-export { createNewOrder, getOrderById, updateOrderToPaid }
+async function payment(req, res) {
+  try {
+    let order = await Order.findById(req.params.id)
+    let line_items = order.orderItems.map((item) => {
+      return {
+        // name: item.name,
+        price: item.product,
+        quantity: item.qty,
+      }
+    })
+    // const session = await stripe.checkout.sessions.create({
+    //   customer_email: req.user.email,
+    //   client_reference_id: req.params.id,
+    //   line_items,
+    //   mode: 'payment',
+    //   success_url: `${req.protocol}://${req.get('host')}/profile`,
+    //   cancel_url: `${req.protocol}://${req.get('host')}/profile`,
+    // })
+    res.json(line_items)
+  } catch (err) {
+    res.json(err.message)
+  }
+}
+export { createNewOrder, getOrderById, updateOrderToPaid, payment }
