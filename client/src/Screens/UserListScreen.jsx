@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react'
-import { Container, Row, Col, Button, Form, Table, Tab } from 'react-bootstrap'
-import { Link, Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Button, Table, Tab } from 'react-bootstrap'
+import { Navigate } from 'react-router-dom'
 import axios from 'axios'
 import Message from '../components/Message'
 import Cookies from 'js-cookie'
@@ -73,7 +73,7 @@ function UserListScreen() {
                   )}
                 </td>
                 <td>
-                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
+                  <LinkContainer to={`/admin/user/edit/${user._id}`}>
                     <Button variant="outline-primary" className="btn-sm">
                       {' '}
                       <i className="fas fa-edit"></i>{' '}

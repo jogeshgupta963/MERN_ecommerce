@@ -62,11 +62,12 @@ function PlaceOrderScreen() {
     navigate(`/order/${order._id}`)
   }
 
-  // useEffect(() => {
-  //   if (status === 'success') {
-  //     navigate(`/order/${order._id}`)
-  //   }
-  // }, [dispatch, navigate, status, order._id])
+  useEffect(() => {
+    // eslint - disable - next - line
+    if (status === 'success') {
+      navigate(`/order/${order._id}`)
+    }
+  }, [dispatch, navigate, status, order._id])
 
   return (
     <>
