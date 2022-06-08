@@ -62,27 +62,23 @@ async function editProduct(req, res) {
     const {
       name,
       price,
-      user,
-      image,
       brand,
       category,
       countInStock,
       numReviews,
       description,
     } = req.body
-
+    console.log(req.file)
     const product = await Product.findById(req.params.id)
     if (!product) throw new Error('Product not found')
-
     product.name = name
     product.price = price
-    product.image = image
+    product.image = req.file.path
     product.brand = brand
     product.category = category
     product.countInStock = countInStock
     product.numReviews = numReviews
     product.description = description
-
     await product.save()
     res.json(product)
   } catch (err) {

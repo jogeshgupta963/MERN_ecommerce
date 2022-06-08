@@ -12,6 +12,7 @@ function EditProductScreen() {
   const { user } = useSelector((state) => state.user)
   const { products, status, error } = useSelector((state) => state.products)
   const [singleProduct, setSingleProduct] = React.useState({})
+  const [image, setImage] = React.useState(null)
 
   const name = useRef(singleProduct.name)
   const price = useRef(singleProduct.Price)
@@ -19,29 +20,37 @@ function EditProductScreen() {
   const brand = useRef(singleProduct.brand)
   const category = useRef(singleProduct.category)
   const countInStock = useRef(singleProduct.countInStock)
-  const image = useRef(singleProduct.image)
+  // const image = useRef(singleProduct.image)
+
+  const handleFileChange = (e) => {
+    setImage(e.target.files)
+    // console.log(e.target.files)
+  }
 
   const submitHandle = async (e) => {
     e.preventDefault()
-    console.log(
-      name.current.value,
-      price.current.value,
-      description.current.value,
-      brand.current.value,
-      category.current.value,
-      countInStock.current.value,
-      image.current.value,
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+    const { data } = await axios.put(
+      `/products/${singleProduct._id}`,
+      {
+        name: name.current.value,
+        price: price.current.value,
+        description: description.current.value,
+        brand: brand.current.value,
+        category: category.current.value,
+        countInStock: countInStock.current.value,
+        image: image,
+      },
+      config,
     )
-    const { data } = await axios.put(`/products/${singleProduct._id}`, {
-      name: name.current.value,
-      price: price.current.value,
-      description: description.current.value,
-      brand: brand.current.value,
-      category: category.current.value,
-      countInStock: countInStock.current.value,
-      image: image.current.value,
-    })
-    navigate('/admin/all-products/')
+
+    console.log(data)
+    // navigate('/admin/all-products/')
   }
   useEffect(() => {
     const prodDetails = async () => {
@@ -49,7 +58,7 @@ function EditProductScreen() {
       setSingleProduct(data)
     }
     prodDetails()
-  }, [products])
+  }, [products, id])
 
   return (
     <div>
@@ -122,7 +131,11 @@ function EditProductScreen() {
 
               <Form.Group controlId="image">
                 <Form.Label className="mt-2">Image</Form.Label>
-                <Form.Control type="file" ref={image}></Form.Control>
+                <Form.Control
+                  type="file"
+                  // ref={image}
+                  onChange={handleFileChange}
+                ></Form.Control>
               </Form.Group>
 
               <Button className="mt-3" type="submit" variant="primary">

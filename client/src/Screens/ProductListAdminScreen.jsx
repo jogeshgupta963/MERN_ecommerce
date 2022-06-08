@@ -35,7 +35,7 @@ function ProductListAdminScreen() {
       const response = await axios.post('/products')
       if (!response) throw new Error('user not found')
       setErr({ variant: 'success', msg: 'Product Created' })
-      navigate(`/admin/products/edit/${response.data._id}`)
+      navigate(`/admin/product/edit/${response.data._id}`)
     } catch (error) {
       setErr({ variant: 'danger', msg: error.message })
     }
