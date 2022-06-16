@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { removeUser } from '../redux/user'
 import axios from 'axios'
+import SearchBox from './SearchBox'
 
 function Header() {
   const { user } = useSelector((state) => state.user)
@@ -30,6 +31,7 @@ function Header() {
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <SearchBox />
             <Nav className="ml-5" style={{ marginLeft: 'auto' }}>
               <LinkContainer to="/cart">
                 <Nav.Link>

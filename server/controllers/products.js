@@ -5,7 +5,13 @@ import Product from '../models/Product.js'
 //@access Public
 async function getAllProducts(req, res) {
   try {
-    const product = await Product.find()
+    const { keyword } = req.query
+    const products = keyword
+      ? {
+          name: { $regex: keyword, $options: 'i' },
+        }
+      : {}
+    const product = await Product.find({ ...products })
     res.status(200).json(product)
   } catch (error) {
     res.status(404).json(error.message)
@@ -38,6 +44,9 @@ async function deleteProduct(req, res) {
   }
 }
 
+//@route /products/
+//@desc POST create product
+//@access private/admin
 async function createProduct(req, res) {
   try {
     const product = new Product({
@@ -57,6 +66,9 @@ async function createProduct(req, res) {
     res.json(error.message)
   }
 }
+//@route /products/:id
+//@desc PUT update product
+//@access private/admin
 async function editProduct(req, res) {
   try {
     const {
@@ -68,17 +80,47 @@ async function editProduct(req, res) {
       numReviews,
       description,
     } = req.body
-    console.log(req.file)
     const product = await Product.findById(req.params.id)
     if (!product) throw new Error('Product not found')
     product.name = name
     product.price = price
-    product.image = req.file.path
+    product.image = req.file.path.replaceAll('\\', '/').split('public')[1]
     product.brand = brand
     product.category = category
     product.countInStock = countInStock
     product.numReviews = numReviews
     product.description = description
+    await product.save()
+    res.json(product)
+  } catch (err) {
+    res.json(err.message)
+  }
+}
+
+async function createReview(req, res) {
+  try {
+    const { id } = req.params
+    const { rating, comment } = req.body
+
+    const product = await Product.findById(id)
+    if (!product) throw new Error('Product not found')
+
+    if (
+      product.reviews.find((r) => r.user.toString() === req.user._id.toString())
+    )
+      throw new Error('Already Reviewed')
+
+    product.reviews.push({
+      user: req.user._id,
+      rating: Number(rating),
+      comment,
+      name: req.user.name,
+    })
+
+    product.numReviews = product.reviews.length
+    product.rating =
+      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+      product.reviews.length
     await product.save()
     res.json(product)
   } catch (err) {
@@ -92,4 +134,5 @@ export {
   deleteProduct,
   createProduct,
   editProduct,
+  createReview,
 }

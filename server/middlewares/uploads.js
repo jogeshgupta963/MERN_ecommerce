@@ -1,7 +1,7 @@
 import path from 'path'
 import multer from 'multer'
 
-var types = ['image/png', 'image/jpg, image/jpeg']
+var types = ['image/png', 'image/jpg', 'image/jpeg']
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'client/public/Images')
@@ -18,6 +18,7 @@ var upload = multer({
     if (types.includes(file.mimetype)) {
       callback(null, true)
     } else {
+      console.log(types + file.mimetype)
       console.log('File not accepted')
     }
   },

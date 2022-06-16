@@ -31,6 +31,7 @@ function App() {
           <Container>
             <Routes>
               <Route exact path="/" element={<HomeScreen />} />
+              <Route path="/search/:keyword" element={<HomeScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/login" element={<LoginScreen />} />
               <Route path="/register" element={<RegisterScreen />} />
@@ -56,7 +57,6 @@ function App() {
                 path="/admin/product/edit/:id"
                 element={<EditProductScreen />}
               />
-              {/* /admin/user/${user._id}/edit */}
             </Routes>
           </Container>
         </main>

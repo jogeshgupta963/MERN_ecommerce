@@ -26,7 +26,7 @@ function PlaceOrderScreen() {
 
   const taxPrice = Number(itemPrice * 0.18).toFixed(2)
 
-  const shippingPrice = itemPrice * 0.01
+  const shippingPrice = (itemPrice * 0.01).toFixed(2)
 
   const totalPrice = itemPrice + taxPrice + shippingPrice
 

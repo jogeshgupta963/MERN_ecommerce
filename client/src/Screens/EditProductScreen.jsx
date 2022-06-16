@@ -5,6 +5,7 @@ import { Container, Row, Col, Button, Form } from 'react-bootstrap'
 import axios from 'axios'
 import Message from '../components/Message'
 import Cookies from 'js-cookie'
+import Loader from '../components/Loader'
 
 function EditProductScreen() {
   const { id } = useParams()
@@ -12,7 +13,7 @@ function EditProductScreen() {
   const { user } = useSelector((state) => state.user)
   const { products, status, error } = useSelector((state) => state.products)
   const [singleProduct, setSingleProduct] = React.useState({})
-  const [image, setImage] = React.useState(null)
+  const [uploading, setUploading] = React.useState(false)
 
   const name = useRef(singleProduct.name)
   const price = useRef(singleProduct.Price)
@@ -20,37 +21,61 @@ function EditProductScreen() {
   const brand = useRef(singleProduct.brand)
   const category = useRef(singleProduct.category)
   const countInStock = useRef(singleProduct.countInStock)
-  // const image = useRef(singleProduct.image)
+  const [image, setImage] = React.useState(null)
 
-  const handleFileChange = (e) => {
-    setImage(e.target.files)
-    // console.log(e.target.files)
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    // const formData = new FormData()
+    // formData.append('image', file)
+    // setUploading(true)
+    // try {
+    //   const config = {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   }
+    //   const { data } = await axios.put('/products', formData, config)
+    setImage(file)
+    // console.log(file)
+    // } catch (error) {
+    //   console.log(error.message)
+    //   setUploading(false)
+    // }
   }
 
   const submitHandle = async (e) => {
     e.preventDefault()
 
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-    const { data } = await axios.put(
-      `/products/${singleProduct._id}`,
-      {
-        name: name.current.value,
-        price: price.current.value,
-        description: description.current.value,
-        brand: brand.current.value,
-        category: category.current.value,
-        countInStock: countInStock.current.value,
-        image: image,
-      },
-      config,
-    )
+    try {
+      console.log(image)
 
-    console.log(data)
-    // navigate('/admin/all-products/')
+      const formData = new FormData()
+      formData.append('image', image)
+
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+      const { data } = await axios.put(
+        `/products/${singleProduct._id}`,
+        {
+          name: name.current.value,
+          price: price.current.value,
+          description: description.current.value,
+          brand: brand.current.value,
+          category: category.current.value,
+          countInStock: countInStock.current.value,
+          image: image,
+        },
+        config,
+      )
+
+      if (data) navigate('/admin/all-products/')
+      else throw new Error('Something went wrong')
+    } catch (err) {
+      console.log(err)
+    }
   }
   useEffect(() => {
     const prodDetails = async () => {
@@ -136,6 +161,13 @@ function EditProductScreen() {
                   // ref={image}
                   onChange={handleFileChange}
                 ></Form.Control>
+                {/* <Form.File
+                  id="image-file"
+                  label="Choose File"
+                  custom
+                  onChange={handleFileChange}
+                ></Form.File> */}
+                {uploading && <Loader />}
               </Form.Group>
 
               <Button className="mt-3" type="submit" variant="primary">

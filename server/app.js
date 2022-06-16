@@ -1,18 +1,28 @@
 import express from 'express'
+import path from 'path'
 import cookieParser from 'cookie-parser'
+import morgan from 'morgan'
 import { connect } from './database/db.js'
 import cors from 'cors'
 // require('dotenv').config();
 import 'dotenv/config'
-const app = express()
+
 import { router as products } from './routes/products.js'
 import { router as user } from './routes/user.js'
 import { router as order } from './routes/order.js'
 import { notFound, errorHandle } from './middlewares/error.js'
+
+const app = express()
+
 //use
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 app.use(express.json())
 app.use(cors())
 app.use(cookieParser())
+const __dirname = path.resolve()
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
 //routes
 app.use('/products', products)

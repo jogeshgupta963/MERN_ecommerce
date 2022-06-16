@@ -4,9 +4,9 @@ import axios from 'axios'
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async () => {
+  async (keyword = '') => {
     try {
-      const { data } = await axios.get('/products')
+      const { data } = await axios.get(`/products?keyword=${keyword}`)
       return data
     } catch (error) {
       return error.message
