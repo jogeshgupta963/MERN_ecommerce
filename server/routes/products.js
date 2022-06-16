@@ -6,6 +6,7 @@ import {
   createProduct,
   editProduct,
   createReview,
+  getTopRatedProducts,
 } from '../controllers/products.js'
 import { isLoggedIn, isAdmin } from '../middlewares/auth.js'
 import { upload } from '../middlewares/uploads.js'
@@ -33,4 +34,7 @@ router
   .put(isLoggedIn, isAdmin, upload.single('image'), editProduct)
 
 router.route('/reviews/:id').post(isLoggedIn, createReview)
+
+router.route('/topRatedProducts').post(getTopRatedProducts)
+
 export { router }

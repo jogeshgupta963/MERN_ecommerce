@@ -8,17 +8,22 @@ import '../loader.css'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import { useParams } from 'react-router-dom'
+import PaginatePage from '../components/PaginatePage'
+import ProductCarousel from '../components/ProductCarousel'
 
 function HomeScreen() {
-  const { products, status, error } = useSelector((state) => state.products)
+  const { products, page, pages, status, error } = useSelector(
+    (state) => state.products,
+  )
   const dispatch = useDispatch()
-  const { keyword } = useParams()
+  var { keyword, pageNumber } = useParams()
   useEffect(() => {
-    dispatch(fetchProducts(keyword))
-  }, [dispatch, keyword])
+    dispatch(fetchProducts({ keyword, pageNumber }))
+  }, [dispatch, keyword, pageNumber])
 
   return (
     <div>
+      {!keyword && <ProductCarousel />}
       <h1 className="py-3">Latest Products</h1>
       <Row>
         {status === 'error' && (
@@ -34,6 +39,7 @@ function HomeScreen() {
             </Col>
           ))}
       </Row>
+      <PaginatePage pages={pages} page={page} keyword={keyword} />
     </div>
   )
 }

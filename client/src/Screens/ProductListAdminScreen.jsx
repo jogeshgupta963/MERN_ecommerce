@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Button, Table, Row, Col } from 'react-bootstrap'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Message from '../components/Message'
 import Cookies from 'js-cookie'
@@ -9,14 +9,19 @@ import { fetchProducts } from '../redux/productList'
 import { deleteProduct } from '../redux/productList'
 import Loader from '../components/Loader'
 import { LinkContainer } from 'react-router-bootstrap'
+import PaginatePage from '../components/PaginatePage'
 
 function ProductListAdminScreen() {
   //hooks
-  const { products, status, error } = useSelector((state) => state.products)
+  const { products, page, pages, status, error } = useSelector(
+    (state) => state.products,
+  )
   const { user } = useSelector((state) => state.user)
   const [err, setErr] = React.useState(null)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { pageNumber } = useParams()
+
   //functions
   const deleteHandle = async (id) => {
     try {
@@ -42,8 +47,8 @@ function ProductListAdminScreen() {
   }
   //hooks
   useEffect(() => {
-    dispatch(fetchProducts())
-  }, [dispatch])
+    dispatch(fetchProducts({ pageNumber }))
+  }, [dispatch, pageNumber])
 
   return (
     <div>
@@ -108,6 +113,7 @@ function ProductListAdminScreen() {
               ))}
             </tbody>
           </Table>
+          <PaginatePage pages={pages} page={page} isAdmin />
         </>
       )}
     </div>

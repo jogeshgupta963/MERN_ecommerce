@@ -5,14 +5,22 @@ import Product from '../models/Product.js'
 //@access Public
 async function getAllProducts(req, res) {
   try {
+    const pageSize = 10
+
+    const page = Number(req.query.pageNumber) || 1
+
     const { keyword } = req.query
     const products = keyword
       ? {
           name: { $regex: keyword, $options: 'i' },
         }
       : {}
+    const count = await Product.countDocuments({ ...products })
     const product = await Product.find({ ...products })
-    res.status(200).json(product)
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+
+    res.status(200).json({ product, page, pages: Math.ceil(count / pageSize) })
   } catch (error) {
     res.status(404).json(error.message)
   }
@@ -96,7 +104,9 @@ async function editProduct(req, res) {
     res.json(err.message)
   }
 }
-
+//@route /products/reviews/:id
+//@desc POST create review
+//@access private
 async function createReview(req, res) {
   try {
     const { id } = req.params
@@ -127,6 +137,17 @@ async function createReview(req, res) {
     res.json(err.message)
   }
 }
+//@route /products/top
+//@desc GET get top rated products
+//@access Public
+async function getTopRatedProducts(req, res) {
+  try {
+    const products = await Product.find({}).sort({ rating: -1 }).limit(3)
+    res.json(products)
+  } catch (error) {
+    res.json(error.message)
+  }
+}
 
 export {
   getAllProducts,
@@ -135,4 +156,5 @@ export {
   createProduct,
   editProduct,
   createReview,
+  getTopRatedProducts,
 }
