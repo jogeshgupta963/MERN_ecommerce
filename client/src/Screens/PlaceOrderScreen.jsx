@@ -26,9 +26,9 @@ function PlaceOrderScreen() {
 
   const taxPrice = Number(itemPrice * 0.18).toFixed(2)
 
-  const shippingPrice = (itemPrice * 0.01).toFixed(2)
+  const shippingPrice = Number((itemPrice * 0.01).toFixed(2))
 
-  const totalPrice = itemPrice + taxPrice + shippingPrice
+  var totalPrice = Number(itemPrice) + Number(taxPrice) + Number(shippingPrice)
 
   //   hooks
   const dispatch = useDispatch()
@@ -59,15 +59,25 @@ function PlaceOrderScreen() {
         totalPrice,
       }),
     )
-    navigate(`/order/${order._id}`)
+    console.log(
+      order,
+      orderItems,
+      shipping,
+      payment,
+      itemPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+    )
+    // navigate(`/order/${order._id}`)
   }
 
-  useEffect(() => {
-    // eslint - disable - next - line
-    if (status === 'success') {
-      navigate(`/order/${order._id}`)
-    }
-  }, [dispatch, navigate, status, order._id])
+  // useEffect(() => {
+  // eslint - disable - next - line
+  // if (status === 'success') {
+  //   navigate(`/order/${order._id}`)
+  //   }
+  // }, [dispatch, navigate, status, order._id])
 
   return (
     <>
